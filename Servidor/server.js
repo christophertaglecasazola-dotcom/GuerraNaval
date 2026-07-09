@@ -81,43 +81,29 @@ socket.id
 
 
 
-
-
 // CREAR SALA
 
-socket.on(
-"crearSala",
-()=>{
+socket.on("crearSala", () => {
 
+    console.log("================================");
+    console.log("Evento crearSala recibido");
+    console.log("Jugador:", socket.id);
 
-let codigo =
-crearSala(socket);
+    let codigo = crearSala(socket);
 
+    console.log("Código generado:", codigo);
 
+    socket.join(codigo);
 
-socket.join(codigo);
+    socket.emit("salaCreada", {
+        codigo: codigo,
+        jugador: socket.id
+    });
 
-
-
-socket.emit(
-"salaCreada",
-{
-
-codigo,
-
-jugador:socket.id
-
-}
-
-);
-
-
+    console.log("Evento salaCreada enviado");
+    console.log("================================");
 
 });
-
-
-
-
 
 
 
