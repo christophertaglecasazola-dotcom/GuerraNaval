@@ -1,0 +1,229 @@
+/* ============================
+   ESTILO GENERAL
+============================ */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+
+    background:#0B1F3A;
+    color:white;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:30px;
+
+}
+
+h1{
+
+    margin-bottom:20px;
+
+}
+
+h2{
+
+    margin-bottom:15px;
+
+}
+
+/* ============================
+   MENÚ
+============================ */
+
+#menu{
+
+    width:420px;
+    background:#183B63;
+    padding:20px;
+    border-radius:10px;
+    text-align:center;
+    margin-bottom:20px;
+
+}
+
+button{
+
+    padding:12px 20px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:16px;
+    margin:5px;
+
+    background:#2196F3;
+    color:white;
+
+    transition:.3s;
+
+}
+
+button:hover{
+
+    background:#1976D2;
+
+}
+
+input{
+
+    padding:10px;
+    width:180px;
+    border:none;
+    border-radius:6px;
+    font-size:16px;
+
+}
+
+#codigoGenerado{
+
+    color:#00FF99;
+    margin-top:15px;
+
+}
+
+/* ============================
+   ESTADO
+============================ */
+
+#estado{
+
+    width:420px;
+    background:#183B63;
+    padding:20px;
+    border-radius:10px;
+    margin-bottom:20px;
+    text-align:center;
+
+}
+
+#mensaje{
+
+    font-size:18px;
+    color:#FFD54F;
+
+}
+
+/* ============================
+   TABLERO
+============================ */
+
+#tablero{
+
+    width:520px;
+    background:#183B63;
+    padding:20px;
+    border-radius:10px;
+
+}
+
+/* TABLERO 10x10 */
+
+#grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(10,45px);
+    grid-template-rows:repeat(10,45px);
+
+    gap:4px;
+
+    justify-content:center;
+
+}
+
+/* Casillas */
+
+.casilla{
+
+    width:45px;
+    height:45px;
+
+    background:#2196F3;
+
+    border:1px solid white;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+/* Hover */
+
+.casilla:hover{
+
+    background:#64B5F6;
+
+}
+
+/* Agua */
+
+.agua{
+
+    background:#1565C0;
+
+}
+
+/* Barco */
+
+.barco{
+
+    background:#777;
+
+}
+
+/* Impacto */
+
+.impacto{
+
+    background:red;
+
+}
+
+/* Fallo */
+
+.fallo{
+
+    background:white;
+    color:black;
+
+}
+
+/* ============================
+   RESPONSIVE
+============================ */
+
+@media(max-width:600px){
+
+#menu,
+#estado,
+#tablero{
+
+    width:95%;
+
+}
+
+#grid{
+
+grid-template-columns:repeat(10,30px);
+grid-template-rows:repeat(10,30px);
+
+}
+
+.casilla{
+
+width:30px;
+height:30px;
+
+}
+
+}
