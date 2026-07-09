@@ -4,18 +4,7 @@
 
 // socket.js
 
-const socket = io("http://localhost:3000");
-
-
-socket.on("connect",()=>{
-
-    console.log(
-        "Conectado al servidor:",
-        socket.id
-    );
-
-});
-
+const socket = io();
 
 // Guardaremos datos de la partida
 
