@@ -2,8 +2,19 @@
 // CONEXIÓN CON EL SERVIDOR
 // =====================================
 
+// socket.js
 
 const socket = io("http://localhost:3000");
+
+
+socket.on("connect",()=>{
+
+    console.log(
+        "Conectado al servidor:",
+        socket.id
+    );
+
+});
 
 
 // Guardaremos datos de la partida
