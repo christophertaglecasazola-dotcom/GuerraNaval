@@ -1,173 +1,451 @@
-const express = require("express");
-const http = require("http");
-const { Server } = require("socket.io");
-const path = require("path");
+// server.js
 
-const app = express();
-const server = http.createServer(app);
-const io = new Server(server);
 
-// Puerto
-const PORT = 3000;
+const express =
+require("express");
 
-// Servir la carpeta cliente
-app.use(express.static(path.join(__dirname, "../cliente")));
 
-// ============================
-// SALAS
-// ============================
+const http =
+require("http");
 
-const salas = {};
 
-// ============================
-// GENERAR CÓDIGO
-// ============================
+const {Server} =
+require("socket.io");
 
-function generarCodigo() {
 
-    const caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-    let codigo = "";
+const {
 
-    for (let i = 0; i < 6; i++) {
+crearSala,
 
-        codigo += caracteres.charAt(
-            Math.floor(Math.random() * caracteres.length)
-        );
+unirSala,
 
+obtenerSala
+
+}=require("./salas");
+
+
+
+const {
+
+crearFlota,
+
+disparar,
+
+gano
+
+}=require("./juego");
+
+
+
+
+
+const app =
+express();
+
+
+
+const servidor =
+http.createServer(app);
+
+
+
+const io =
+new Server(servidor,{
+    cors:{
+        origin:"*"
     }
+});
 
-    return codigo;
+
+
+
+
+let partidas={};
+
+
+
+
+
+
+io.on(
+"connection",
+(socket)=>{
+
+
+console.log(
+"Jugador conectado:",
+socket.id
+);
+
+
+
+
+
+
+// CREAR SALA
+
+socket.on(
+"crearSala",
+()=>{
+
+
+let codigo =
+crearSala(socket);
+
+
+
+socket.join(codigo);
+
+
+
+socket.emit(
+"salaCreada",
+{
+
+codigo,
+
+jugador:socket.id
 
 }
 
-// ============================
-// SOCKET.IO
-// ============================
+);
 
-io.on("connection", (socket) => {
 
-    console.log("Jugador conectado:", socket.id);
-
-    // -------------------------
-    // CREAR SALA
-    // -------------------------
-
-    socket.on("crearSala", () => {
-
-        let codigo;
-
-        do {
-
-            codigo = generarCodigo();
-
-        } while (salas[codigo]);
-
-        salas[codigo] = {
-
-            jugadores: [socket.id]
-
-        };
-
-        socket.join(codigo);
-
-        socket.emit("salaCreada", codigo);
-
-        console.log("Sala creada:", codigo);
-
-    });
-
-    // -------------------------
-    // UNIRSE
-    // -------------------------
-
-    socket.on("unirseSala", (codigo) => {
-
-        const sala = salas[codigo];
-
-        if (!sala) {
-
-            socket.emit("errorSala", "La sala no existe.");
-
-            return;
-
-        }
-
-        if (sala.jugadores.length >= 2) {
-
-            socket.emit("errorSala", "La sala está llena.");
-
-            return;
-
-        }
-
-        sala.jugadores.push(socket.id);
-
-        socket.join(codigo);
-
-        io.to(codigo).emit("inicioJuego");
-
-        console.log("Jugador unido:", codigo);
-
-    });
-
-    // -------------------------
-    // DISPAROS
-    // -------------------------
-
-    socket.on("disparo", (datos) => {
-
-        const rooms = [...socket.rooms];
-
-        const sala = rooms.find(r => r !== socket.id);
-
-        if (!sala) return;
-
-        socket.to(sala).emit("disparoRecibido", datos);
-
-    });
-
-    // -------------------------
-    // DESCONECTAR
-    // -------------------------
-
-    socket.on("disconnect", () => {
-
-        console.log("Jugador desconectado:", socket.id);
-
-        for (const codigo in salas) {
-
-            salas[codigo].jugadores =
-                salas[codigo].jugadores.filter(
-                    id => id !== socket.id
-                );
-
-            if (salas[codigo].jugadores.length === 0) {
-
-                delete salas[codigo];
-
-                console.log("Sala eliminada:", codigo);
-
-            }
-
-        }
-
-    });
 
 });
 
-// ============================
-// INICIAR SERVIDOR
-// ============================
 
-server.listen(PORT, () => {
 
-    console.log("--------------------------------");
 
-    console.log("Servidor iniciado");
 
-    console.log("http://localhost:3000");
 
-    console.log("--------------------------------");
+
+// UNIR SALA
+
+
+socket.on(
+"unirseSala",
+(data)=>{
+
+
+let sala =
+unirSala(
+data.codigo,
+socket
+);
+
+
+
+if(!sala){
+
+
+socket.emit(
+"errorSala",
+"Codigo incorrecto"
+);
+
+
+return;
+
+
+}
+
+
+
+
+
+socket.join(
+data.codigo
+);
+
+
+
+let juego1 =
+crearFlota();
+
+
+
+let juego2 =
+crearFlota();
+
+
+
+
+partidas[data.codigo]={
+
+
+jugador1:sala.jugador1,
+
+
+jugador2:sala.jugador2,
+
+
+
+tableros:{
+
+
+[sala.jugador1]:juego1,
+
+
+[sala.jugador2]:juego2
+
+
+},
+
+
+
+turno:sala.jugador1
+
+
+};
+
+
+
+
+
+io.to(data.codigo)
+.emit(
+"jugadoresListos",
+{
+codigo:data.codigo
+}
+);
+
+
+
+
+
+
+io.to(sala.jugador1)
+.emit(
+"iniciarJuego",
+{
+turno:true
+}
+);
+
+
+
+io.to(sala.jugador2)
+.emit(
+"iniciarJuego",
+{
+turno:false
+}
+);
+
+
+
+
+
+});
+
+
+
+
+
+
+
+
+// DISPARO
+
+
+socket.on(
+"disparar",
+(data)=>{
+
+
+let partida =
+partidas[data.sala];
+
+
+
+if(!partida)
+return;
+
+
+
+
+if(
+partida.turno !== socket.id
+){
+
+return;
+
+}
+
+
+
+
+
+let enemigo =
+partida.jugador1===socket.id
+?
+partida.jugador2
+:
+partida.jugador1;
+
+
+
+
+
+
+let juego =
+partida.tableros[enemigo];
+
+
+
+
+let resultado =
+disparar(
+juego,
+data.fila,
+data.columna
+);
+
+
+
+
+
+
+io.to(socket.id)
+.emit(
+"resultadoDisparo",
+{
+
+...resultado,
+
+fila:data.fila,
+
+columna:data.columna
+
+}
+
+);
+
+
+
+
+
+
+if(
+gano(juego)
+){
+
+
+io.to(socket.id)
+.emit(
+"ganador"
+);
+
+
+
+io.to(enemigo)
+.emit(
+"perdedor"
+);
+
+
+
+return;
+
+
+}
+
+
+
+
+
+
+// Si fue agua cambia turno
+
+if(resultado.tipo==="agua"){
+
+
+
+partida.turno=enemigo;
+
+
+
+io.to(partida.jugador1)
+.emit(
+"cambiarTurno",
+{
+turno:
+partida.turno===partida.jugador1
+}
+);
+
+
+
+io.to(partida.jugador2)
+.emit(
+"cambiarTurno",
+{
+turno:
+partida.turno===partida.jugador2
+}
+);
+
+
+
+}
+
+
+
+});
+
+
+
+
+
+
+socket.on(
+"disconnect",
+()=>{
+
+
+console.log(
+"Jugador desconectado"
+);
+
+
+});
+
+
+
+});
+
+
+
+
+
+
+
+servidor.listen(
+3000,
+()=>{
+
+
+console.log(
+"--------------------------------"
+);
+
+
+console.log(
+"Servidor iniciado"
+);
+
+
+console.log(
+"http://localhost:3000"
+);
+
+
+console.log(
+"--------------------------------"
+);
+
 
 });

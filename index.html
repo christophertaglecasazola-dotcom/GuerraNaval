@@ -1,80 +1,199 @@
+
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guerra Naval Online</title>
+
+    <title>Guerra Naval</title>
 
     <link rel="stylesheet" href="Cliente/style.css">
-
-    <!-- Socket.IO -->
-    <script src="/socket.io/socket.io.js"></script>
 </head>
 
 <body>
 
     <header>
-        <h1>⚓ Guerra Naval Online</h1>
+        <h1>⚓ Guerra Naval</h1>
+        <p>Batalla multijugador</p>
     </header>
 
-    <!-- ===================== -->
-    <!-- MENU PRINCIPAL -->
-    <!-- ===================== -->
 
-    <section id="menu">
+    <!-- PANEL DE SALA -->
+    <section id="sala">
+
+        <h2>Sala de juego</h2>
 
         <button id="crearSala">
             Crear Sala
         </button>
 
-        <br><br>
 
-        <input
+        <div id="codigoCreado">
+            Tu código:
+            <span id="codigoSala">
+                -----
+            </span>
+        </div>
+
+
+        <hr>
+
+
+        <input 
+            id="codigoEntrada"
             type="text"
-            id="codigoSala"
-            placeholder="Código de sala">
+            placeholder="Código de sala"
+        >
+
 
         <button id="unirseSala">
             Unirse
         </button>
 
-        <br><br>
 
-        <h3 id="codigoGenerado"></h3>
-
-    </section>
-
-    <hr>
-
-    <!-- ===================== -->
-    <!-- INFORMACIÓN -->
-    <!-- ===================== -->
-
-    <section id="estado">
-
-        <h2>Estado del Juego</h2>
-
-        <p id="mensaje">
-            Esperando...
+        <p id="estadoSala">
+            Esperando jugadores...
         </p>
 
     </section>
 
-    <hr>
 
-    <!-- ===================== -->
-    <!-- TABLERO -->
-    <!-- ===================== -->
 
-    <section id="tablero">
+    <!-- ZONA PRINCIPAL DEL JUEGO -->
+    <main id="juego">
 
-        <h2>Tablero</h2>
 
-        <div id="grid"></div>
+        <!-- TABLERO PROPIO -->
+        <section class="zona">
+
+            <h2>Tu flota</h2>
+
+            <div id="tableroJugador" class="tablero">
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- TABLERO ENEMIGO -->
+        <section class="zona">
+
+            <h2>Enemigo</h2>
+
+            <div id="tableroEnemigo" class="tablero">
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- INFORMACION DE BARCOS -->
+        <aside id="flota">
+
+            <h2>Mis barcos</h2>
+
+
+            <div class="barco" id="acorazado">
+                ⚓ Acorazado
+                <span>
+                    ██████
+                </span>
+            </div>
+
+
+            <div class="barco" id="portaaviones">
+                🚢 Portaaviones
+                <span>
+                    █████
+                </span>
+            </div>
+
+
+            <div class="barco" id="buque">
+                ⛴ Buque
+                <span>
+                    ████
+                </span>
+            </div>
+
+
+            <div class="barco" id="crucero">
+                🚤 Crucero
+                <span>
+                    ███
+                </span>
+            </div>
+
+
+            <div class="barco" id="destructor">
+                🛥 Destructor
+                <span>
+                    ██
+                </span>
+            </div>
+
+
+        </aside>
+
+
+    </main>
+
+
+
+    <!-- MENSAJES DEL JUEGO -->
+
+    <section id="mensaje">
+
+        <h2 id="tituloMensaje">
+            Esperando partida...
+        </h2>
+
+        <p id="textoMensaje">
+            
+        </p>
+
 
     </section>
 
+
+
+    <!-- VICTORIA / DERROTA -->
+
+    <section id="resultado" class="oculto">
+
+        <h1 id="resultadoTitulo">
+            
+        </h1>
+
+
+        <p id="resultadoTexto">
+
+        </p>
+
+
+        <button id="reiniciar">
+            Nueva partida
+        </button>
+
+
+    </section>
+
+
+
+    <!-- SOCKET.IO -->
+    <script src="/socket.io/socket.io.js"></script>
+
+
+    <!-- Archivos propios -->
     <script src="Cliente/socket.js"></script>
     <script src="Cliente/script.js"></script>
+
+
 </body>
+
 </html>

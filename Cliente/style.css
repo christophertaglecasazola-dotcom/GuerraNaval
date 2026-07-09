@@ -1,229 +1,497 @@
-/* ============================
-   ESTILO GENERAL
-============================ */
+/* =========================
+   CONFIGURACIÓN GENERAL
+========================= */
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial, Helvetica, sans-serif;
+* {
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-body{
 
-    background:#0B1F3A;
-    color:white;
+body {
+
+    margin: 0;
+    padding: 0;
+
+    background:
+    linear-gradient(
+        135deg,
+        #001f3f,
+        #003566
+    );
+
+    color: white;
+
+    min-height: 100vh;
+
+}
+
+
+
+header {
+
+    text-align: center;
+
+    padding: 20px;
+
+}
+
+
+header h1 {
+
+    font-size: 40px;
+
+    margin-bottom: 5px;
+
+}
+
+
+header p {
+
+    color: #a8dadc;
+
+}
+
+
+
+
+
+/* =========================
+       SALA
+========================= */
+
+
+#sala {
+
+    width: 90%;
+
+    max-width: 500px;
+
+    margin: auto;
+
+    background: rgba(255,255,255,0.1);
+
+    padding: 20px;
+
+    border-radius: 15px;
+
+    text-align: center;
+
+}
+
+
+button {
+
+    background: #00b4d8;
+
+    color: white;
+
+    border: none;
+
+    padding: 12px 20px;
+
+    margin: 8px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-size: 16px;
+
+}
+
+
+button:hover {
+
+    background: #0077b6;
+
+}
+
+
+
+input {
+
+    padding: 12px;
+
+    border-radius: 8px;
+
+    border: none;
+
+    width: 200px;
+
+}
+
+
+
+
+
+/* =========================
+       ZONA DEL JUEGO
+========================= */
+
+
+#juego {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: flex-start;
+
+    gap: 30px;
+
+    flex-wrap: wrap;
+
+    margin-top: 30px;
+
+}
+
+
+
+.zona {
+
+    text-align: center;
+
+}
+
+
+
+
+/* =========================
+       TABLEROS
+========================= */
+
+
+.tablero {
+
+    display: grid;
+
+    grid-template-columns: repeat(10, 35px);
+
+    grid-template-rows: repeat(10, 35px);
+
+    gap: 2px;
+
+    background: #023e8a;
+
+    padding: 5px;
+
+    border-radius: 8px;
+
+}
+
+
+
+.casilla {
+
+
+    width: 35px;
+
+    height: 35px;
+
+
+    background:
+
+    #90e0ef;
+
+
+    border: 1px solid #0077b6;
+
+
     display:flex;
-    flex-direction:column;
+
+    justify-content:center;
+
     align-items:center;
-    padding:30px;
 
-}
 
-h1{
-
-    margin-bottom:20px;
-
-}
-
-h2{
-
-    margin-bottom:15px;
-
-}
-
-/* ============================
-   MENÚ
-============================ */
-
-#menu{
-
-    width:420px;
-    background:#183B63;
-    padding:20px;
-    border-radius:10px;
-    text-align:center;
-    margin-bottom:20px;
-
-}
-
-button{
-
-    padding:12px 20px;
-    border:none;
-    border-radius:6px;
     cursor:pointer;
-    font-size:16px;
-    margin:5px;
 
-    background:#2196F3;
-    color:white;
 
-    transition:.3s;
+    font-size:20px;
+
 
 }
 
-button:hover{
 
-    background:#1976D2;
 
-}
+.casilla:hover {
 
-input{
 
-    padding:10px;
-    width:180px;
-    border:none;
-    border-radius:6px;
-    font-size:16px;
+    background:#caf0f8;
+
 
 }
 
-#codigoGenerado{
 
-    color:#00FF99;
-    margin-top:15px;
+
+
+
+/* =========================
+       ESTADOS DE CASILLA
+========================= */
+
+
+
+.barco {
+
+
+    background:#555;
 
 }
 
-/* ============================
-   ESTADO
-============================ */
 
-#estado{
 
-    width:420px;
-    background:#183B63;
+.impacto {
+
+
+    background:#e63946;
+
+}
+
+
+.agua {
+
+
+    background:#48cae4;
+
+
+}
+
+
+
+.destruido {
+
+
+    background:#111;
+
+    color:red;
+
+}
+
+
+
+
+
+/* =========================
+       FLOTA
+========================= */
+
+
+#flota {
+
+
+    background:
+
+    rgba(255,255,255,0.1);
+
+
     padding:20px;
-    border-radius:10px;
-    margin-bottom:20px;
-    text-align:center;
+
+
+    border-radius:15px;
+
+
+    min-width:250px;
+
 
 }
 
-#mensaje{
+
+
+.barco {
+
+
+    background:none;
+
+    margin:15px 0;
 
     font-size:18px;
-    color:#FFD54F;
 
 }
 
-/* ============================
-   TABLERO
-============================ */
 
-#tablero{
 
-    width:520px;
-    background:#183B63;
-    padding:20px;
-    border-radius:10px;
+.barco span {
 
-}
 
-/* TABLERO 10x10 */
+    display:block;
 
-#grid{
+    margin-top:5px;
 
-    display:grid;
+    color:#90ee90;
 
-    grid-template-columns:repeat(10,45px);
-    grid-template-rows:repeat(10,45px);
-
-    gap:4px;
-
-    justify-content:center;
+    letter-spacing:3px;
 
 }
 
-/* Casillas */
 
-.casilla{
 
-    width:45px;
-    height:45px;
 
-    background:#2196F3;
 
-    border:1px solid white;
+.barco.dañado span {
 
-    display:flex;
-    justify-content:center;
-    align-items:center;
 
-    cursor:pointer;
+    color:orange;
 
-    transition:.2s;
 
 }
 
-/* Hover */
 
-.casilla:hover{
 
-    background:#64B5F6;
+.barco.destruido span {
 
-}
 
-/* Agua */
+    color:red;
 
-.agua{
 
-    background:#1565C0;
+    text-decoration:line-through;
+
 
 }
 
-/* Barco */
 
-.barco{
 
-    background:#777;
 
-}
 
-/* Impacto */
+/* =========================
+       MENSAJES
+========================= */
 
-.impacto{
 
-    background:red;
+#mensaje {
 
-}
 
-/* Fallo */
+    text-align:center;
 
-.fallo{
+    margin:30px;
 
-    background:white;
-    color:black;
 
-}
+    background:
 
-/* ============================
-   RESPONSIVE
-============================ */
+    rgba(0,0,0,0.3);
 
-@media(max-width:600px){
 
-#menu,
-#estado,
-#tablero{
+    padding:15px;
 
-    width:95%;
+    border-radius:15px;
 
 }
 
-#grid{
 
-grid-template-columns:repeat(10,30px);
-grid-template-rows:repeat(10,30px);
+
+
+
+/* =========================
+       RESULTADO
+========================= */
+
+
+#resultado {
+
+
+    position:fixed;
+
+    top:50%;
+
+    left:50%;
+
+
+    transform:
+
+    translate(-50%,-50%);
+
+
+    background:#023047;
+
+
+    padding:40px;
+
+
+    border-radius:20px;
+
+
+    text-align:center;
+
+
+    box-shadow:
+
+    0 0 30px black;
+
 
 }
 
-.casilla{
 
-width:30px;
-height:30px;
+
+.oculto {
+
+
+    display:none;
+
 
 }
+
+
+
+#resultadoTitulo {
+
+
+    font-size:40px;
+
+
+}
+
+
+
+.victoria {
+
+
+    color:#ffd60a;
+
+
+}
+
+
+
+.derrota {
+
+
+    color:#e63946;
+
+
+}
+
+
+
+
+/* =========================
+       RESPONSIVE
+========================= */
+
+
+@media(max-width:800px){
+
+
+    .tablero {
+
+
+        grid-template-columns:repeat(10,25px);
+
+        grid-template-rows:repeat(10,25px);
+
+
+    }
+
+
+
+    .casilla {
+
+
+        width:25px;
+
+        height:25px;
+
+    }
+
 
 }

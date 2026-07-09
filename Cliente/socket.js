@@ -2,115 +2,381 @@
 // CONEXIÓN CON EL SERVIDOR
 // =====================================
 
+
 const socket = io();
 
-// Elementos HTML
-const btnCrear = document.getElementById("crearSala");
-const btnUnirse = document.getElementById("unirseSala");
 
-const inputCodigo = document.getElementById("codigoSala");
-const codigoGenerado = document.getElementById("codigoGenerado");
+// Guardaremos datos de la partida
+
+let salaActual = null;
+let jugadorId = null;
+let miTurno = false;
+
 
 
 // =====================================
 // CREAR SALA
 // =====================================
 
-btnCrear.addEventListener("click", () => {
+
+document
+.getElementById("crearSala")
+.addEventListener("click",()=>{
+
 
     socket.emit("crearSala");
+
 
 });
 
 
+
+
 // =====================================
-// UNIRSE A UNA SALA
+// RECIBIR CÓDIGO DE SALA
 // =====================================
 
-btnUnirse.addEventListener("click", () => {
 
-    const codigo = inputCodigo.value.trim().toUpperCase();
+socket.on("salaCreada",(data)=>{
 
-    if(codigo === ""){
 
-        alert("Ingrese un código.");
+    salaActual = data.codigo;
+
+    jugadorId = data.jugador;
+
+
+    document
+    .getElementById("codigoSala")
+    .textContent = data.codigo;
+
+
+
+    document
+    .getElementById("estadoSala")
+    .textContent =
+    "Comparte este código con otro jugador";
+
+
+});
+
+
+
+
+// =====================================
+// UNIRSE A SALA
+// =====================================
+
+
+document
+.getElementById("unirseSala")
+.addEventListener("click",()=>{
+
+
+    let codigo =
+    document
+    .getElementById("codigoEntrada")
+    .value
+    .toUpperCase();
+
+
+
+    socket.emit(
+        "unirseSala",
+        {
+            codigo:codigo
+        }
+    );
+
+
+});
+
+
+
+
+
+// =====================================
+// SALA COMPLETA
+// =====================================
+
+
+socket.on("jugadoresListos",(data)=>{
+
+
+    salaActual=data.codigo;
+
+
+    document
+    .getElementById("estadoSala")
+    .textContent =
+    "⚔️ Partida iniciada";
+
+
+});
+
+
+
+
+
+// =====================================
+// INICIO DEL JUEGO
+// =====================================
+
+
+socket.on("iniciarJuego",(data)=>{
+
+
+    miTurno=data.turno;
+
+
+    if(miTurno){
+
+
+        mostrarMensaje(
+            "🎯 Tu turno"
+        );
+
+
+    }
+    else{
+
+
+        mostrarMensaje(
+            "⏳ Esperando rival"
+        );
+
+
+    }
+
+
+
+});
+
+
+
+
+
+
+// =====================================
+// ENVIAR DISPARO
+// =====================================
+
+
+function enviarDisparo(fila,columna){
+
+
+    if(!miTurno){
+
+        mostrarMensaje(
+            "Espera tu turno"
+        );
 
         return;
 
     }
 
-    socket.emit("unirseSala", codigo);
-
-});
 
 
-// =====================================
-// RESPUESTA DEL SERVIDOR
-// =====================================
-
-// Código generado
-
-socket.on("salaCreada",(codigo)=>{
-
-    codigoGenerado.innerHTML =
-    "Código de sala: <b>" + codigo + "</b>";
-
-    cambiarMensaje("Esperando al segundo jugador...");
-
-});
-
-
-// Ambos jugadores conectados
-
-socket.on("inicioJuego",()=>{
-
-    cambiarMensaje("¡Jugador conectado! Comienza la partida.");
-
-});
-
-
-// Error
-
-socket.on("errorSala",(mensaje)=>{
-
-    alert(mensaje);
-
-});
-
-
-// =====================================
-// DISPARAR
-// =====================================
-
-function enviarDisparo(fila,columna){
-
-    socket.emit("disparo",{
-
-        fila:fila,
-        columna:columna
-
-    });
+    socket.emit(
+        "disparar",
+        {
+            sala:salaActual,
+            fila:fila,
+            columna:columna
+        }
+    );
 
 }
 
 
-// =====================================
-// RECIBIR DISPARO
-// =====================================
 
-socket.on("disparoRecibido",(datos)=>{
-
-    console.log("Disparo recibido:",datos);
-
-});
 
 
 // =====================================
 // RESULTADO DEL DISPARO
 // =====================================
 
-socket.on("resultadoDisparo",(datos)=>{
 
-    console.log(datos);
+socket.on("resultadoDisparo",(data)=>{
+
+
+    if(data.tipo==="impacto"){
+
+
+        mostrarMensaje(
+            "💥 ¡Impacto!"
+        );
+
+
+    }
+
+
+    if(data.tipo==="agua"){
+
+
+        mostrarMensaje(
+            "🌊 Agua"
+        );
+
+
+    }
+
+
+    if(data.tipo==="hundido"){
+
+
+        mostrarMensaje(
+            "🔥 ¡Barco destruido!"
+        );
+
+
+    }
+
+
 
 });
+
+
+
+
+
+
+// =====================================
+// CAMBIO DE TURNO
+// =====================================
+
+
+socket.on("cambiarTurno",(data)=>{
+
+
+    miTurno=data.turno;
+
+
+
+    if(miTurno){
+
+
+        mostrarMensaje(
+            "🎯 Tu turno"
+        );
+
+
+    }
+    else{
+
+
+        mostrarMensaje(
+            "⏳ Turno enemigo"
+        );
+
+
+    }
+
+
+});
+
+
+
+
+
+// =====================================
+// VICTORIA
+// =====================================
+
+
+socket.on("ganador",()=>{
+
+
+    mostrarResultado(
+        "🏆 ¡Victoria Total!",
+        "🎉 ¡Felicidades comandante! Has destruido toda la flota enemiga.",
+        true
+    );
+
+
+});
+
+
+
+
+
+// =====================================
+// DERROTA
+// =====================================
+
+
+socket.on("perdedor",()=>{
+
+
+    mostrarResultado(
+        "⚓ Fin de la batalla",
+        "Buena pelea comandante. Tu flota fue destruida.",
+        false
+    );
+
+
+});
+
+
+
+
+
+
+// =====================================
+// FUNCIONES VISUALES
+// =====================================
+
+
+function mostrarMensaje(texto){
+
+
+    document
+    .getElementById("tituloMensaje")
+    .textContent=texto;
+
+
+}
+
+
+
+
+function mostrarResultado(titulo,texto,victoria){
+
+
+    let panel =
+    document
+    .getElementById("resultado");
+
+
+    panel.classList.remove("oculto");
+
+
+
+    document
+    .getElementById("resultadoTitulo")
+    .textContent=titulo;
+
+
+
+    document
+    .getElementById("resultadoTexto")
+    .textContent=texto;
+
+
+
+    if(victoria){
+
+
+        panel.classList.add("victoria");
+
+
+    }
+    else{
+
+
+        panel.classList.add("derrota");
+
+
+    }
+
+
+}
