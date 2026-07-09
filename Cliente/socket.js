@@ -3,7 +3,7 @@
 // =====================================
 
 
-const socket = io();
+const socket = io("http://localhost:3000");
 
 
 // Guardaremos datos de la partida
