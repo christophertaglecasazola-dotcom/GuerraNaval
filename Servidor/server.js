@@ -42,7 +42,7 @@ gano
 
 const app =
 express();
-
+app.use(express.static(__dirname));
 
 
 const servidor =
