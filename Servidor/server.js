@@ -40,9 +40,9 @@ gano
 
 
 
-const app =
-express();
-app.use(express.static(__dirname));
+const path = require("path");
+
+app.use(express.static(path.join(__dirname, "..")));
 
 
 const servidor =
