@@ -380,3 +380,80 @@ function mostrarResultado(titulo,texto,victoria){
 
 
 }
+// Te recomiendo unificar o asegurar este orden en tu cliente:
+
+// =====================================
+// ESCUCHAS DE SOCKET (CLIENTE)
+// =====================================
+
+socket.on("mostrarBarcos", (data) => {
+    data.forEach(pos => {
+        let casilla = buscarCasillaJugador(pos.fila, pos.columna);
+        if (casilla) {
+            casilla.classList.add("barco");
+            casilla.textContent = "🚢";
+        }
+    });
+});
+
+// Cuando tú disparas y recibes respuesta de tu ataque
+socket.on("resultadoDisparo", (data) => {
+    let casilla = buscarCasillaEnemiga(data.fila, data.columna);
+    if (!casilla) return;
+
+    if (data.tipo === "agua") {
+        casilla.classList.add("agua");
+        casilla.textContent = "🌊";
+        mostrarMensaje("浪 Agua");
+    }
+    if (data.tipo === "impacto") {
+        casilla.classList.add("impacto");
+        casilla.textContent = "💥";
+        mostrarMensaje("💥 ¡Impacto!");
+    }
+    if (data.tipo === "hundido") {
+        casilla.classList.add("destruido");
+        casilla.textContent = "❌";
+        mostrarMensaje("🔥 ¡Barco enemigo destruido!");
+    }
+});
+
+// 🔥 NUEVO: Cuando el enemigo te dispara a ti (Actualiza tu tablero izquierdo "TU FLOTA")
+socket.on("resultadoDisparoDefensor", (data) => {
+    let casilla = buscarCasillaJugador(data.fila, data.columna);
+    if (!casilla) return;
+
+    if (data.tipo === "agua") {
+        casilla.classList.add("agua");
+        casilla.textContent = "🌊";
+        mostrarMensaje("⏳ El enemigo falló. Tu turno.");
+    } else if (data.tipo === "impacto" || data.tipo === "hundido") {
+        casilla.classList.remove("barco");
+        casilla.classList.add("impacto");
+        casilla.textContent = "💥";
+        mostrarMensaje("⚠️ ¡Nos han dado!");
+    }
+});
+
+// 🔥 CORREGIDO: Actualizar el estado lateral derecho
+socket.on("actualizarFlota", (data) => {
+    if (!data.barco) return;
+
+    // Convertimos a minúsculas para asegurar que encuentre el ID del HTML
+    let barco = document.getElementById(data.barco.toLowerCase());
+    if (!barco) return;
+
+    let barra = barco.querySelector("span");
+    if (!barra) return;
+
+    let vida = "";
+    for (let i = 0; i < data.vida; i++) {
+        vida += "█";
+    }
+    barra.textContent = vida;
+
+    if (data.destruido) {
+        barco.classList.add("destruido");
+        barra.textContent = "❌ Destruido";
+    }
+});
