@@ -21,17 +21,22 @@ const {
 // =======================
 // SERVIDOR EXPRESS
 // =======================
+// =======================
+// SERVIDOR EXPRESS
+// =======================
 
 const app = express();
 
+// 1. Obtén la ruta absoluta de la carpeta raíz (GuerraNaval)
+const rutaRaiz = path.resolve(__dirname, "..");
 
-// server.js está en:
-// GuerraNaval/Servidor/server.js
-//
-// index.html está en:
-// GuerraNaval/index.html
+// 2. Sirve los archivos estáticos apuntando directamente a esa raíz estructurada
+app.use(express.static(rutaRaiz));
 
-app.use(express.static(path.join(__dirname, "../public")));
+// 3. Agrega esta ruta explícita para el index.html (esto soluciona el bloqueo del proxy de GitHub)
+app.get("/", (req, res) => {
+    res.sendFile(path.join(rutaRaiz, "index.html"));
+});
 
 
 const servidor = http.createServer(app);
