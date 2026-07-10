@@ -31,8 +31,7 @@ const app = express();
 // index.html está en:
 // GuerraNaval/index.html
 
-app.use(express.static(path.join(__dirname, "..")));
-
+app.use(express.static(path.join(__dirname, "../public")));
 
 
 const servidor = http.createServer(app);
